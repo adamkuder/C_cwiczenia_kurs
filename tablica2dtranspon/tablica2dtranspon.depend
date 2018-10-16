@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1539696797 source:c:\users\adamk\desktop\nowy folder\tablica2dtranspon\main.c
+	<stdio.h>
+	<stdlib.h>
+	<time.h>
+
