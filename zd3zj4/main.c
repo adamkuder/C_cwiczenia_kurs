@@ -21,21 +21,26 @@ int main()
 
     int sumdivorsA, sumdivorsB;
     sumdivorsA=sumdivo(a);
-    printf("\nLiczba Skojarzona to  %d \n", sumdivorsA);
-    int znaleziono=0;
+    //printf("\nLiczba Skojarzona to  %d \n", sumdivorsA);
+    /*
     for(int i=1; i<=sumdivorsA; i++)
     {
         sumdivorsB=sumdivo(i);
         if(a==sumdivorsB && i== sumdivorsA )
         {
-            printf("\nLiczba Skojasadasdasasdsaasddassadasdatfghfghrrtrhttrhsdasasdasrzona to  %d \n", i-1);
+            printf("\nLiczba Skojarzona to  %d \n", i-1);
             znaleziono++;
         }
-    }
 
-    if(znaleziono=0)
+    }*/
+    sumdivorsB=sumdivo(sumdivorsA-1);
+    if(sumdivorsB==a+1)
     {
-        printf("Nie znalazlem liczby ");
+        printf("Znalazlem liczbe %d \n", sumdivorsA-1);
+    }
+    else
+    {
+        printf("Nie znalazlem liczby");
     }
     return 0;
 }
