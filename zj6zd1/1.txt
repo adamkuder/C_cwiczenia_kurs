@@ -1,0 +1,70 @@
+Download Read file program.
+
+There are blank lines present at the end of the file. In our program we have opened only one file, you can open multiple files in a single program and in different modes as required. File handling is essential when we wish to store data permanently on a storage device. All variables and data of a program are lost when it exits if that data is required later we need to store it in a file.
+
+C programs
+C programming
+C graphics
+C graphics programs
+C source codes
+Tutorials
+Data structures
+C mouse programs
+C++ programs
+Java programs
+conio.h
+math.h
+Programming books
+C programs
+Hello world
+Print Integer
+Addition
+Odd or Even
+Add, subtract, multiply and divide
+Check vowel
+Leap year
+Add digits
+Factorial
+HCF and LCM
+Decimal to binary conversion
+nCr and nPr
+Add n numbers
+Swapping
+Reverse number
+Palindrome number
+Print Pattern
+Diamond
+Prime numbers
+Find armstrong number
+Generate armstrong number
+Fibonacci series 
+Print Floyd's triangle
+Print Pascal triangle
+Addition using pointers
+Maximum element in array
+Minimum element in array
+Linear search
+Binary search
+Reverse array
+Insert element in array
+Delete element from array
+Merge arrays
+Bubble sort
+Insertion sort
+Selection sort
+Add matrices
+Subtract matrices
+Transpose matrix
+Multiply two matrices
+Print string
+String length
+Compare strings
+Copy string
+Concatenate strings
+Reverse string
+Find palindrome
+Delete vowels
+C substring
+Subsequence
+Sort a string
+Remove spaces
