@@ -4,6 +4,7 @@
 #define WINDOW_WIDTH (800)
 #define WINDOW_HEIGHT (600)
 #define SPEED (300)
+#define DIFFICULTY_LEVEL (500) ///ERROR IF <48<HARD<500<EASY
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_timer.h>
 #include <SDL2/SDL_image.h>
@@ -55,6 +56,7 @@ int main(void)
     SDL_Surface* mob_surface = IMG_Load("mob.png");
     SDL_Surface* fire_surface = IMG_Load("fire.png");
     SDL_Surface* mob_fire_surface = IMG_Load("mob_fire.png");
+    SDL_Surface* explo = IMG_Load("expl.png");
     if(!surface)
     {
         printf("error creating surface %s \n",SDL_GetError());
@@ -73,6 +75,8 @@ int main(void)
     SDL_FreeSurface(fire_surface);
     SDL_Texture* mob_shoot = SDL_CreateTextureFromSurface(rend, mob_fire_surface);
     SDL_FreeSurface(mob_fire_surface);
+    SDL_Texture* expl= SDL_CreateTextureFromSurface(rend, explo);
+    SDL_FreeSurface(explo);
 
     if(!tex)
     {
@@ -111,7 +115,7 @@ int main(void)
         mob_dest[i].x=40*j;
         mob_dest[i].y=50*k;
     }
-    int move_mob=0, choice_mob=0, ekchem=0, shooting=0, active_shooting=0,shooting_mob=0,success_end=0, to_speed_mob=0, speed_mob=2, the_score=0,change_color_text=0;
+    int move_mob=0, choice_mob=0, ekchem=0, shooting=0, active_shooting=0,shooting_mob=0,success_end=0, to_speed_mob=0, speed_mob=2, the_score=0,change_color_text=0,to_expl=-1,to_expl_count=0;
     char the_score_str[10]="0";
     SDL_Rect shoot_dest[10000];
     SDL_Rect mob_shoot_dest[10000];
@@ -135,7 +139,7 @@ int main(void)
     SDL_Color Violet = {255, 0, 255};
     SDL_Color White = {255, 255, 255};
 
-    SDL_Rect Message_rect[5];
+    SDL_Rect Message_rect[6];
     Message_rect[0].x = 10;
     Message_rect[0].y = 10;
     Message_rect[0].w = 40;
@@ -147,14 +151,18 @@ int main(void)
     Message_rect[2].x = WINDOW_WIDTH/2-45;
     Message_rect[3].x = WINDOW_WIDTH/2-45;
     Message_rect[4].x = WINDOW_WIDTH/2-45;
+    Message_rect[5].x = WINDOW_WIDTH/2-75;
     Message_rect[2].y = WINDOW_HEIGHT/2-60;
     Message_rect[3].y = WINDOW_HEIGHT/2;
     Message_rect[4].y = WINDOW_HEIGHT/2+60;
+    Message_rect[5].y = WINDOW_HEIGHT/2;
     for(int i=2; i<=4; i++)
     {
             Message_rect[i].h=30;
             Message_rect[i].w=90;
     }
+    Message_rect[5].h=60;
+    Message_rect[5].w=190;
 
 
 
@@ -195,7 +203,7 @@ int main(void)
         if(change_color_text==1)
         {
             SDL_Surface* surfaceMessage2 = TTF_RenderText_Solid(Sans, "START", Violet);
-            SDL_Surface* surfaceMessage3 = TTF_RenderText_Solid(Sans, "WYNIKI", White);
+            SDL_Surface* surfaceMessage3 = TTF_RenderText_Solid(Sans, "WYNIK", White);
             SDL_Surface* surfaceMessage4 = TTF_RenderText_Solid(Sans, "KONIEC", Violet);
 
             SDL_Texture* Message2 = SDL_CreateTextureFromSurface(rend, surfaceMessage2);
@@ -210,7 +218,7 @@ int main(void)
         else if(change_color_text==2)
         {
             SDL_Surface* surfaceMessage2 = TTF_RenderText_Solid(Sans, "START", Violet);
-            SDL_Surface* surfaceMessage3 = TTF_RenderText_Solid(Sans, "WYNIKI", Violet);
+            SDL_Surface* surfaceMessage3 = TTF_RenderText_Solid(Sans, "WYNIK", Violet);
             SDL_Surface* surfaceMessage4 = TTF_RenderText_Solid(Sans, "KONIEC", White);
 
             SDL_Texture* Message2 = SDL_CreateTextureFromSurface(rend, surfaceMessage2);
@@ -225,7 +233,7 @@ int main(void)
         else
         {
             SDL_Surface* surfaceMessage2 = TTF_RenderText_Solid(Sans, "START", White);
-            SDL_Surface* surfaceMessage3 = TTF_RenderText_Solid(Sans, "WYNIKI", Violet);
+            SDL_Surface* surfaceMessage3 = TTF_RenderText_Solid(Sans, "WYNIK", Violet);
             SDL_Surface* surfaceMessage4 = TTF_RenderText_Solid(Sans, "KONIEC", Violet);
             change_color_text=0;
 
@@ -243,6 +251,7 @@ int main(void)
             choice_option=0;
             if(change_color_text==0)
             {
+
                 k=1;
                 j=0;
                 for(int i=0; i<=47; i++)
@@ -292,15 +301,19 @@ int main(void)
         {
         SDL_Surface* surfaceMessage = TTF_RenderText_Solid(Sans, "score ", Violet);
         SDL_Surface* surfaceMessage1 = TTF_RenderText_Solid(Sans, the_score_str, Violet);
+        SDL_Surface* surfaceMessage5 = TTF_RenderText_Solid(Sans, "PORAZKA", Violet);
+        SDL_Surface* surfaceMessage6 = TTF_RenderText_Solid(Sans, "ZWYCIESTWO", Violet);
         SDL_Texture* Message = SDL_CreateTextureFromSurface(rend, surfaceMessage);
         SDL_Texture* Message1 = SDL_CreateTextureFromSurface(rend, surfaceMessage1);
+        SDL_Texture* Message5 = SDL_CreateTextureFromSurface(rend, surfaceMessage5);
+        SDL_Texture* Message6 = SDL_CreateTextureFromSurface(rend, surfaceMessage6);
 
         if(move_mob==3)
         {
             //sprawdzanie z prawej strony kolizje mobkow
             if(choice_mob == 0)
             {
-                for(int i=0; i<=48; i++)
+                for(int i=0; i<=47; i++)
                 {
 
                     if(mob_dest[i].x>=WINDOW_WIDTH-30 && destroyed[i]==0)
@@ -317,7 +330,7 @@ int main(void)
             //sprawdzanie z lewej strony kolizje mobkow
             if(choice_mob == 2)
             {
-                for(int i=0; i<=48; i++)
+                for(int i=0; i<=47; i++)
                 {
 
                     if(mob_dest[i].x<=2 &&destroyed[i]==0)
@@ -334,7 +347,7 @@ int main(void)
             // poruszanie sie w prawo mobki
             if(choice_mob==0)
             {
-                for(int i=0; i<=48; i++)
+                for(int i=0; i<=47; i++)
                 {
                     mob_dest[i].x+=speed_mob;
                 }
@@ -366,12 +379,13 @@ int main(void)
 
                 move_mob=0;
             }
-            int losu=random(0,500);
+            int losu=random(0,DIFFICULTY_LEVEL);
             //moobki strzelaja
-            if (losu<48)
+            if (losu<47)
             {
                 if(destroyed[losu]!=1)
                 {
+                    printf("wylosowany to %d, o x= %d i y= %d \n",losu,mob_dest[losu].y,mob_dest[losu].x);
                     SDL_QueryTexture(mob_shoot, NULL, NULL, &mob_shoot_dest[shooting_mob].w,&mob_shoot_dest[shooting_mob].h);
                     mob_shoot_dest[shooting_mob].y=mob_dest[losu].y+20;
                     mob_shoot_dest[shooting_mob].x=mob_dest[losu].x+5;
@@ -479,6 +493,7 @@ int main(void)
                 destroyed[i]=1;
                 shoot_dest[j].y=-30;
                 the_score++;
+                to_expl=i;
             }
             }
         }
@@ -565,14 +580,46 @@ int main(void)
 
         SDL_RenderCopy(rend, tex, NULL, &dest);
 
+        if(to_expl!=-1)
+        {
+            SDL_RenderCopy(rend, expl, NULL, &mob_dest[to_expl]);
+            if(to_expl_count==1)
+            {
+                to_expl=-1;
+                to_expl_count=0;
+            }
+            else {to_expl_count++;}
+        }
+
 
         SDL_RenderPresent(rend);
 
         SDL_Delay(1000/60);
+        if(koniec==1)
+        {
+            SDL_Delay(2000);
+            SDL_RenderClear(rend);
+            SDL_RenderCopy(rend, Message5, NULL, &Message_rect[5]);
+            SDL_RenderPresent(rend);
+            SDL_Delay(2000);
+        }
+        if(koniec==2)
+        {
+            SDL_Delay(500);
+            SDL_RenderClear(rend);
+            SDL_RenderCopy(rend, Message6, NULL, &Message_rect[5]);
+            SDL_RenderPresent(rend);
+            SDL_Delay(2000);
+        }
     }
+
     if(koniec!=2)
     {
         the_score=0;
+    }
+    for(int i=0;i<=shooting_mob; i++)
+    {
+        mob_shoot_dest[i].y=0;
     }
     shooting=0;
     shooting_mob=0;
