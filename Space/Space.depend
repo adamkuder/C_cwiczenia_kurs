@@ -1,11 +1,12 @@
 # depslib dependency file v1.0
-1548752911 source:c:\users\adamk\desktop\nowy folder\space\main.c
+1548931707 source:c:\users\adamk\desktop\nowy folder\space\main.c
 	<stdio.h>
 	<stdlib.h>
 	<SDL2/SDL.h>
 	<SDL2/SDL_timer.h>
 	<SDL2/SDL_image.h>
 	<SDL2/SDL_ttf.h>
+	<unistd.h>
 
 1540998544 c:\dev\sdl2\i686-w64-mingw32\include\sdl2\sdl.h
 	"SDL_main.h"

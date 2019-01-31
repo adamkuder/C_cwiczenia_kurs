@@ -4,11 +4,20 @@
 #define WINDOW_WIDTH (800)
 #define WINDOW_HEIGHT (600)
 #define SPEED (300)
-#define DIFFICULTY_LEVEL (500) ///ERROR IF <48<HARD<500<EASY
+#define DIFFICULTY_LEVEL (500) ///ERROR <48<HARD<500<EASY
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_timer.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include <unistd.h>
+void swap(int *a, int *b)
+{
+   int t;
+
+   t  = *b;
+   *b = *a;
+   *a = t;
+}
 int random(int min, int max)
 {
     int tmp;
@@ -115,7 +124,8 @@ int main(void)
         mob_dest[i].x=40*j;
         mob_dest[i].y=50*k;
     }
-    int move_mob=0, choice_mob=0, ekchem=0, shooting=0, active_shooting=0,shooting_mob=0,success_end=0, to_speed_mob=0, speed_mob=2, the_score=0,change_color_text=0,to_expl=-1,to_expl_count=0;
+    int move_mob=0, choice_mob=0, ekchem=0, shooting=0, active_shooting=0,shooting_mob=0,success_end=0,
+    to_speed_mob=0, speed_mob=2, the_score=0,change_color_text=0,to_expl=-1,to_expl_count=0;
     char the_score_str[10]="0";
     SDL_Rect shoot_dest[10000];
     SDL_Rect mob_shoot_dest[10000];
@@ -166,6 +176,47 @@ int main(void)
 
 
 
+    char ch[15],position1[4],position2[4],position3[4];
+    FILE *source, *target;
+    int my_index_file=0;
+    source = fopen("SCORE.txt", "r");
+    while ((ch[my_index_file] = fgetc(source)) != EOF)
+            {
+                my_index_file++;
+            }
+    fclose(source);
+    int postionos=0;
+    int firs=0,sec=0,tri=0;
+    for(int i=0; i<my_index_file; i++)
+    {
+
+        if(ch[i]!=' ')
+        {
+            if(ch[i]=='\n' )
+            {
+                postionos++;
+            }
+            else
+            {
+                if(postionos==0)
+                {
+                    position1[firs]=ch[i];
+                    firs++;
+                }
+                else if(postionos==1)
+                {
+                    position2[sec]=ch[i];
+                    sec++;
+                }
+                else if(postionos==2)
+                {
+                    position3[tri]=ch[i];
+                    tri++;
+                }
+            }
+
+        }
+    }
 
     int koniec=99,close=0;
     while(!close)
@@ -273,11 +324,20 @@ int main(void)
                 choice_option=2;
                 SDL_Surface* surfaceMessage = TTF_RenderText_Solid(Sans, "score ", Violet);
                 SDL_Surface* surfaceMessage1 = TTF_RenderText_Solid(Sans, the_score_str, Violet);
+                SDL_Surface* surfaceMessage7 = TTF_RenderText_Solid(Sans, position1, Violet);
+                SDL_Surface* surfaceMessage8 = TTF_RenderText_Solid(Sans, position2, Violet);
+                SDL_Surface* surfaceMessage9 = TTF_RenderText_Solid(Sans, position3, Violet);
+                SDL_Texture* Message7 = SDL_CreateTextureFromSurface(rend, surfaceMessage7);
+                SDL_Texture* Message8 = SDL_CreateTextureFromSurface(rend, surfaceMessage8);
+                SDL_Texture* Message9 = SDL_CreateTextureFromSurface(rend, surfaceMessage9);
                 SDL_Texture* Message = SDL_CreateTextureFromSurface(rend, surfaceMessage);
                 SDL_Texture* Message1 = SDL_CreateTextureFromSurface(rend, surfaceMessage1);
                 SDL_RenderClear(rend);
                 SDL_RenderCopy(rend, Message, NULL, &Message_rect[0]);
                 SDL_RenderCopy(rend, Message1, NULL, &Message_rect[1]);
+                SDL_RenderCopy(rend, Message7, NULL, &Message_rect[2]);
+                SDL_RenderCopy(rend, Message8, NULL, &Message_rect[3]);
+                SDL_RenderCopy(rend, Message9, NULL, &Message_rect[4]);
 
             }
             else if (change_color_text==2)
@@ -303,10 +363,12 @@ int main(void)
         SDL_Surface* surfaceMessage1 = TTF_RenderText_Solid(Sans, the_score_str, Violet);
         SDL_Surface* surfaceMessage5 = TTF_RenderText_Solid(Sans, "PORAZKA", Violet);
         SDL_Surface* surfaceMessage6 = TTF_RenderText_Solid(Sans, "ZWYCIESTWO", Violet);
+
         SDL_Texture* Message = SDL_CreateTextureFromSurface(rend, surfaceMessage);
         SDL_Texture* Message1 = SDL_CreateTextureFromSurface(rend, surfaceMessage1);
         SDL_Texture* Message5 = SDL_CreateTextureFromSurface(rend, surfaceMessage5);
         SDL_Texture* Message6 = SDL_CreateTextureFromSurface(rend, surfaceMessage6);
+
 
         if(move_mob==3)
         {
@@ -602,6 +664,30 @@ int main(void)
             SDL_RenderCopy(rend, Message5, NULL, &Message_rect[5]);
             SDL_RenderPresent(rend);
             SDL_Delay(2000);
+            int pos1=atoi(position1);
+            int pos2=atoi(position2);
+            int pos3=atoi(position3);
+            if(the_score>pos3)
+            {
+                swap(&the_score,&pos3);
+                if(pos3>pos2)
+                {
+                    swap(&pos3,&pos2);
+                    if(pos2>pos1)
+                    {
+                        swap(&pos1,&pos2);
+                    }
+                }
+            }
+
+            the_score=0;
+            sprintf(position1, "%d", pos1);
+            printf("post1 = %s ",position1);
+            sprintf(position2, "%d", pos2);
+            printf("post2 = %s ",position2);
+            sprintf(position3, "%d", pos3);
+
+
         }
         if(koniec==2)
         {
@@ -612,11 +698,6 @@ int main(void)
             SDL_Delay(2000);
         }
     }
-
-    if(koniec!=2)
-    {
-        the_score=0;
-    }
     for(int i=0;i<=shooting_mob; i++)
     {
         mob_shoot_dest[i].y=0;
@@ -625,8 +706,13 @@ int main(void)
     shooting_mob=0;
     }
 
-
-
+    target = fopen("SCORE.txt", "w");
+    for (int i = 0; position1[i]!='\0'; i++) fputc(position1[i], target);
+    fputc('\n', target);
+    for (int i = 0; position2[i]!='\0'; i++) fputc(position2[i], target);
+    fputc('\n', target);
+    for (int i = 0; position3[i]!='\0'; i++) fputc(position3[i], target);
+    fclose(target);
     SDL_DestroyTexture(tex);
     SDL_DestroyRenderer(rend);
     SDL_DestroyWindow(win);
